@@ -102,7 +102,7 @@ class Fingerprint(object):
 
         with open('/tmp/lol.pic', 'w') as g:
             for i in xrange(288):
-                g.write(self.serial.read(128))
+                g.write(self.serial.read(256))
 
     def image_2_tz(self, buffer):
         self.write(instruction_code=PACKAGE_IMAGE2TZ, data=[buffer])
@@ -180,6 +180,7 @@ def validate_finger():
 
 if __name__ == '__main__':
     with Fingerprint() as f:
+        f.handshake()
         f.empty()
         while f.get_image().get('confirmation_code') != FINGERPRINT_OK:pass
         print f.up_image()
