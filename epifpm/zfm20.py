@@ -2,6 +2,7 @@ __author__ = 'aleivag'
 
 import logging
 import serial
+from cStringIO import StringIO
 
 HEADER = [0xEF, 0x01]
 
@@ -84,10 +85,9 @@ class Fingerprint(object):
 
         csum = self.serial.read(2)
 
-        logger.debug('read package: %s' % repr(buffer))
-
         self.last_read_package = [header, addr, pi, length, confirmation_code, edata, csum]
 
+        logger.debug('read package: %s' % self.last_read_package)
         return dict(
             confirmation_code=ord(confirmation_code),
             extra_data=edata
@@ -106,16 +106,18 @@ class Fingerprint(object):
         return self.read()
 
     def up_image(self):
+        logger.info('UPLOAD IMAGE')
         self.write(instruction_code=PACKAGE_UP_IMAGE, data=[])
-        print self.read()
+        resp = self.read()
+        resp['image'] = StringIO()
+        for i in xrange(288):
+            r = self.serial.read(256/2)
+            logger.debug('   => %s ' % [r])
+            resp['image'].write(r)
+        resp['image'].seek(0)
 
-        logger.debug('Starting image')
+        return resp
 
-        with open('/tmp/lol.bmp', 'w') as g:
-            for i in xrange(288):
-                r = self.serial.read(256)
-                logger.debug(' ' + r)
-                g.write(r)
 
     def image_2_tz(self, buffer):
         self.write(instruction_code=PACKAGE_IMAGE2TZ, data=[buffer])
