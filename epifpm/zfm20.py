@@ -1,5 +1,6 @@
 __author__ = 'aleivag'
 
+import logging
 import serial
 
 HEADER = [0xEF, 0x01]
@@ -19,6 +20,10 @@ PACKAGE_UP_IMAGE = 0x0A
 FINGERPRINT_OK = 0x00
 FINGERPRINT_NOFINGER = 0x02
 FINGERPRINT_ENROLLMISMATCH = 0x0A
+
+logger = logging.getLogger(__name__)
+logger.info('start')
+
 
 class Fingerprint(object):
     def __init__(self, port='/dev/ttyAMA0', baudrate=57600, timeout=2):
@@ -183,5 +188,5 @@ if __name__ == '__main__':
         f.handshake()
         f.empty()
         while f.get_image().get('confirmation_code') != FINGERPRINT_OK:pass
-        print f.up_image()
+
 
