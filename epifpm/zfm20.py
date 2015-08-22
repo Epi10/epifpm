@@ -89,7 +89,7 @@ class Fingerprint(object):
 
         csum = self.serial.read(2)
 
-        self.last_read_package = [header, addr, pi, length, confirmation_code, edata, csum]
+        self.last_read_package = [header, addr, pi, length, resp.get('confirmation_code'), edata, csum]
 
         logger.debug('read package: %s' % self.last_read_package)
         return resp
@@ -111,11 +111,12 @@ class Fingerprint(object):
         self.write(instruction_code=PACKAGE_UP_IMAGE, data=[])
         resp = self.read()
         resp['image'] = StringIO()
-        for i in xrange(288):
+        r = {'identifier': 0x00}
+
+        while r['identifier'] != 0x08:
             r = self.read()
-            #logger.debug('   => %s ' % [r])
             resp['image'].write(r['extra_data'])
-            resp['image'].write(r['extra_data'])
+
         resp['image'].seek(0)
 
         return resp
