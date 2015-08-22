@@ -21,7 +21,7 @@ FINGERPRINT_OK = 0x00
 FINGERPRINT_NOFINGER = 0x02
 FINGERPRINT_ENROLLMISMATCH = 0x0A
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 logger = logging.getLogger(__name__)
 
@@ -196,5 +196,6 @@ if __name__ == '__main__':
         f.handshake()
         f.empty()
         while f.get_image().get('confirmation_code') != FINGERPRINT_OK:pass
+        f.up_image()
 
 
