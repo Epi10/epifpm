@@ -204,4 +204,6 @@ if __name__ == '__main__':
         while f.get_image().get('confirmation_code') != FINGERPRINT_OK:pass
         image = f.up_image()
         with open('/tmp/finguer.bmp', 'wb') as g:
-            g.write(image['image'].read())
+            i = image['image'].read()
+            print i
+            g.write(i)
