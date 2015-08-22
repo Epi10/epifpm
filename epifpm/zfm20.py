@@ -76,22 +76,23 @@ class Fingerprint(object):
         addr = self.serial.read(4)
         pi = self.serial.read(1)
         length = self.serial.read(2)
-        confirmation_code = self.serial.read(1)
-        ilen = sum([ord(i) for i in length])
-        edata=''
 
-        if ilen>3:
-            edata=self.serial.read(ilen-3)
+        ilen = sum([ord(i) for i in length])
+        edata=self.serial.read(ilen-2)
+        resp = {'identifier': pi}
+
+        if pi == 0x07:
+            resp['confirmation_code'] = edata[0]
+            edata = edata[1:]
+
+        resp['extra_data'] = edata
 
         csum = self.serial.read(2)
 
         self.last_read_package = [header, addr, pi, length, confirmation_code, edata, csum]
 
         logger.debug('read package: %s' % self.last_read_package)
-        return dict(
-            confirmation_code=ord(confirmation_code),
-            extra_data=edata
-        )
+        return resp
 
     def handshake(self):
         self.write(instruction_code=PACKAGE_HANDSHAKE, data=[0])
@@ -113,6 +114,7 @@ class Fingerprint(object):
         for i in xrange(288):
             r = self.read()
             #logger.debug('   => %s ' % [r])
+            resp['image'].write(r['extra_data'])
             resp['image'].write(r['extra_data'])
         resp['image'].seek(0)
 
