@@ -74,7 +74,7 @@ class Fingerprint(object):
     def read(self):
         header = self.serial.read(2)
         addr = self.serial.read(4)
-        pi = self.serial.read(1)
+        pi = ord(self.serial.read(1))
         length = self.serial.read(2)
 
         ilen = sum([ord(i) for i in length])
