@@ -21,8 +21,9 @@ FINGERPRINT_OK = 0x00
 FINGERPRINT_NOFINGER = 0x02
 FINGERPRINT_ENROLLMISMATCH = 0x0A
 
+logging.basicConfig(level=logging.INFO)
+
 logger = logging.getLogger(__name__)
-logger.info('start')
 
 
 class Fingerprint(object):
@@ -65,6 +66,7 @@ class Fingerprint(object):
         )
 
         self.last_write_package = buffer
+        logger.debug('write package: %s' % repr(buffer))
         #print "==>", buffer
         self.serial.write(''.join(buffer))
 
@@ -81,6 +83,8 @@ class Fingerprint(object):
             edata=self.serial.read(ilen-3)
 
         csum = self.serial.read(2)
+
+        logger.debug('read package: %s' % repr(buffer))
 
         self.last_read_package = [header, addr, pi, length, confirmation_code, edata, csum]
 
@@ -105,9 +109,13 @@ class Fingerprint(object):
         self.write(instruction_code=PACKAGE_UP_IMAGE, data=[])
         print self.read()
 
-        with open('/tmp/lol.pic', 'w') as g:
+        logger.debug('Starting image')
+
+        with open('/tmp/lol.bmp', 'w') as g:
             for i in xrange(288):
-                g.write(self.serial.read(256))
+                r = self.serial.read(256)
+                logger.debug(' ' + r)
+                g.write(r)
 
     def image_2_tz(self, buffer):
         self.write(instruction_code=PACKAGE_IMAGE2TZ, data=[buffer])
