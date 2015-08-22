@@ -111,7 +111,7 @@ class Fingerprint(object):
         resp = self.read()
         resp['image'] = StringIO()
         for i in xrange(288):
-            r = self.serial.read(256/2)
+            r = self.serial.read(256)
             logger.debug('   => %s ' % [r])
             resp['image'].write(r)
         resp['image'].seek(0)
@@ -198,6 +198,4 @@ if __name__ == '__main__':
         f.handshake()
         f.empty()
         while f.get_image().get('confirmation_code') != FINGERPRINT_OK:pass
-        f.up_image()
-
-
+        print f.up_image()
