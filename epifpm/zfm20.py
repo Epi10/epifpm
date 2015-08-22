@@ -111,9 +111,9 @@ class Fingerprint(object):
         resp = self.read()
         resp['image'] = StringIO()
         for i in xrange(288):
-            r = self.serial.read(256)
+            r = self.read()
             logger.debug('   => %s ' % [r])
-            resp['image'].write(r)
+            resp['image'].write(r['extra_data'])
         resp['image'].seek(0)
 
         return resp

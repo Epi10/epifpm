@@ -2,7 +2,7 @@
 
 
 apt-get update
-apt-get insatll -y hostapd tcpdump
+apt-get install -y hostapd tcpdump python-pip
 
 
 
