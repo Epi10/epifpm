@@ -112,7 +112,7 @@ class Fingerprint(object):
         resp['image'] = StringIO()
         for i in xrange(288):
             r = self.read()
-            logger.debug('   => %s ' % [r])
+            #logger.debug('   => %s ' % [r])
             resp['image'].write(r['extra_data'])
         resp['image'].seek(0)
 
