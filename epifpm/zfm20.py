@@ -82,7 +82,7 @@ class Fingerprint(object):
         resp = {'identifier': pi}
 
         if pi == 0x07:
-            resp['confirmation_code'] = edata[0]
+            resp['confirmation_code'] = ord(edata[0])
             edata = edata[1:]
 
         resp['extra_data'] = edata
