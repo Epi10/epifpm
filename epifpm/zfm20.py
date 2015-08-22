@@ -92,6 +92,7 @@ class Fingerprint(object):
         self.last_read_package = [header, addr, pi, length, resp.get('confirmation_code'), edata, csum]
 
         logger.debug('read package: %s' % self.last_read_package)
+        logger.debug('return read dict: %s' % resp)
         return resp
 
     def handshake(self):
