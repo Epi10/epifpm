@@ -2,10 +2,11 @@ __author__ = 'aleivag'
 
 
 from flask import Flask
-from flask.ext.mako import render_template
+from flask.ext.mako import MakoTemplates, render_template
 
 
 app = Flask(__name__)
+mako = MakoTemplates(app)
 
 
 @app.route("/")
