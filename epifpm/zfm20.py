@@ -17,6 +17,7 @@ PACKAGE_MATCH = 0x03
 PACKAGE_SEARCH = 0x04
 PACKAGE_TEMPLATE_NUM = 0x1d
 PACKAGE_UP_IMAGE = 0x0A
+PACKAGE_UP_CHAR = 0x08
 
 FINGERPRINT_OK = 0x00
 FINGERPRINT_NOFINGER = 0x02
@@ -107,7 +108,7 @@ class Fingerprint(object):
         self.write(instruction_code=PACKAGE_GETIMAGE, data=[])
         return self.read()
 
-    def up_image(self):
+    def up_image(self, fo=None):
         logger.info('UPLOAD IMAGE')
         self.write(instruction_code=PACKAGE_UP_IMAGE, data=[])
         resp = self.read()
@@ -117,15 +118,30 @@ class Fingerprint(object):
         while r['identifier'] != 0x08:
             r = self.read()
             resp['image'].write(r['extra_data'])
+            if fo: fo.write(r['extra_data'])
 
         resp['image'].seek(0)
 
         return resp
 
-
     def image_2_tz(self, buffer):
         self.write(instruction_code=PACKAGE_IMAGE2TZ, data=[buffer])
         return self.read()
+
+    def up_char(self, buffer, fo=None):
+        self.write(instruction_code=PACKAGE_UP_CHAR, data=[buffer])
+        resp = self.read()
+        resp['char'] = StringIO()
+        r = {'identifier': 0x00}
+
+        while r['identifier'] != 0x08:
+            r = self.read()
+            resp['char'].write(r['extra_data'])
+            if fo: fo.write(r['extra_data'])
+
+        resp['char'].seek(0)
+
+        return resp
 
     def match(self):
         self.write(instruction_code=PACKAGE_MATCH, data=[])
@@ -202,8 +218,6 @@ if __name__ == '__main__':
         f.handshake()
         f.empty()
         while f.get_image().get('confirmation_code') != FINGERPRINT_OK:pass
-        image = f.up_image()
+
         with open('/tmp/finguer.bmp', 'wb') as g:
-            i = image['image'].read()
-            print i
-            g.write(i)
+            f.up_image(fo=g)
