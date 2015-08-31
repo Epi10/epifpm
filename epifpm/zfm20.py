@@ -105,6 +105,7 @@ class Fingerprint(object):
         print self.read()
 
     def get_image(self):
+        """Get a finguerprint read from the sensor"""
         self.write(instruction_code=PACKAGE_GETIMAGE, data=[])
         return self.read()
 

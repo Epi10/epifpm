@@ -11,9 +11,18 @@
 <div>
     <h1>Low level API, Tester</h1>
     %for api in LOW_LEVEL_API:
-        <p>api</p>
-    <!-- ${getattr(fingerprint, api)} -->
+        <p>${api} <input type="button" id="lowlevelapi_${api}" value="call ${api}"></p>
 
+    <div>
+        %for varname in getattr(fingerprint, api).im_func.func_code.co_varnames[1:]:
+        <label><b>${varname}</b></label>: <input><br>
+        %endfor
+
+    </div>
+    % if getattr(fingerprint, api).__doc__:
+        <p>${getattr(fingerprint, api).__doc__}</p>
+        <!-- ${getattr(fingerprint, api)} -->
+    %endif
     %endfor
 
 </div>
