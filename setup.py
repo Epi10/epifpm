@@ -6,14 +6,22 @@ from distutils.core import setup
 import os
 from distutils.core import setup
 
-from pyngdom import __version__
-
 try:
     f = open(os.path.join(os.path.dirname(__file__), 'README.rst'))
     long_description = f.read()
     f.close()
 except:
     long_description = ''
+
+
+reqs = []
+
+try:
+    with open(os.path.join(os.path.dirname(__file__), 'requirements.txt')) as f:
+        reqs.extend(map(lambda x: x.strip(), f))
+except:
+    pass
+
 
 setup(
     name='epifpm',
@@ -33,7 +41,8 @@ setup(
         "Topic :: Utilities"
     ],
     keywords=['fingerprint', 'serial'],
-    description='library to read from fingerprit scaners in python',
+    description='library to read from fingerprint scaners in python',
     long_description=long_description,
+    install_requires=reqs,
     license='MIT'
 )

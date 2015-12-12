@@ -2,10 +2,30 @@
 
 
 apt-get update
-apt-get install -y hostapd tcpdump python-pip
+apt-get install -y python-pip git htop
 
 
+checksum=$(sha256sum ${BASH_SOURCE[0]})
 
+
+if [ ! -d  /usr/local/src/epifpm ]; then
+    git clone https://github.com/Epi10/epifpm /usr/local/src/epifpm
+else
+    cd /usr/local/src/epifpm
+    git pull
+fi
+
+new_checksum=$(sha256sum /usr/local/src/epifpm/rpi-prov/prov.sh)
+
+if [ "$checksum" != "$new_checksum" ];then
+    chmod a+x /usr/local/src/epifpm/rpi-prov/prov.sh
+    exit
+fi
+
+
+exit
+
+apt-get install -y hostapd tcpdump python-pip git htop tcpdump
 
 cat >/etc/hostapd/hostapd.conf  << EOL
 
