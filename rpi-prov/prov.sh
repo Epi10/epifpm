@@ -17,7 +17,11 @@ fi
 
 new_checksum=$(sha256sum /usr/local/src/epifpm/rpi-prov/prov.sh)
 
-if [ "{$checksum}" != "${new_checksum}" ];then
+if [ "$checksum" != "$new_checksum" ];then
+    echo "checksum does not match, will run new version"
+    echo $checksum
+    echo $new_checksum
+
     /usr/local/src/epifpm/rpi-prov/prov.sh
     exit
 fi
