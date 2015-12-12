@@ -19,6 +19,8 @@ PACKAGE_TEMPLATE_NUM = 0x1d
 PACKAGE_UP_IMAGE = 0x0A
 PACKAGE_UP_CHAR = 0x08
 
+PACKAGE_DOWN_IMAGE = 0x0B
+
 FINGERPRINT_OK = 0x00
 FINGERPRINT_NOFINGER = 0x02
 FINGERPRINT_ENROLLMISMATCH = 0x0A
@@ -105,18 +107,19 @@ class Fingerprint(object):
         print self.read()
 
     def get_image(self):
-        """Get a fingerprint from the sensor and load it into a "ImageBuffer" """
+        """Get a single read from the sensor looking for a fingerprint and load it into a "ImageBuffer" if successful"""
         self.write(instruction_code=PACKAGE_GETIMAGE, data=[])
         return self.read()
 
     def get_image_until(self, condition=FINGERPRINT_OK):
+        """ Will continuously lookup for a fingerprint from the sensor until a condition """
         r = self.get_image()
         while r.get('confirmation_code') != condition:
             r = self.get_image()
         return r
 
-
     def up_image(self, fo=None):
+        """ Get Image src from ImageBuffer """
         logger.info('UPLOAD IMAGE')
         self.write(instruction_code=PACKAGE_UP_IMAGE, data=[])
         resp = self.read()
@@ -126,11 +129,18 @@ class Fingerprint(object):
         while r['identifier'] != 0x08:
             r = self.read()
             resp['image'].write(r['extra_data'])
-            if fo: fo.write(r['extra_data'])
+            log.debug("get %s bytes" % len(r['extra_data']))
+            if fo:
+                fo.write(r['extra_data'])
 
         resp['image'].seek(0)
 
         return resp
+
+    def down_image(self, fo):
+        "not finish"
+        logger.info('DOWNLOAD IMAGE')
+        self.write(instruction_code=PACKAGE_DOWN_IMAGE, data=[])
 
     def image_2_tz(self, buffer):
         self.write(instruction_code=PACKAGE_IMAGE2TZ, data=[buffer])
@@ -196,14 +206,15 @@ def register_finger(id):
     with Fingerprint() as f:
 
         print "place finger"
-        while f.get_image().get('confirmation_code') != FINGERPRINT_OK: pass
+        f.get_image_until()
         f.image_2_tz(buffer=1)
 
+
         print "remove your finger"
-        while f.get_image().get('confirmation_code') != FINGERPRINT_NOFINGER: pass
+        f.get_image_until(condition=FINGERPRINT_NOFINGER)
 
         print "place finger again"
-        while f.get_image().get('confirmation_code') != FINGERPRINT_OK: pass
+        f.get_image_until()
 
         f.image_2_tz(buffer=2)
 
@@ -216,8 +227,7 @@ def register_finger(id):
 def validate_finger():
     with Fingerprint() as f:
         print "place finger"
-        while f.get_image().get('confirmation_code') != FINGERPRINT_OK:
-            pass
+        f.get_image_until()
         print f.image_2_tz(0x01)
         print f.search(buffer=0x01)
 
