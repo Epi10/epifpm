@@ -148,12 +148,12 @@ class Fingerprint(object):
         rdata = []
         data = fo.read(chunks)
         while data:
-            rdata.append(data)
+            rdata.append(map(ord, data))
             data = fo.read(chunks)
 
         for idata in rdata[:-1]:
-            self.write(instruction_code=idata, data=[], identifier=PACKAGE_DATA)
-        self.write(instruction_code=rdata[-1], data=[], identifier=0x08)
+            self.write(instruction_code=idata[0], data=idata[1:], identifier=PACKAGE_DATA)
+        self.write(instruction_code=rdata[-1][0], data=rdata[-1][1:], identifier=0x08)
 
 
 
