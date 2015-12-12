@@ -2,9 +2,10 @@ __author__ = 'aleivag'
 import os
 from distutils.core import setup
 
-
 import os
 from distutils.core import setup
+
+from epifpm import __version__
 
 try:
     f = open(os.path.join(os.path.dirname(__file__), 'README.rst'))
@@ -30,7 +31,6 @@ setup(
     author='Alvaro Leiva',
     author_email='aleivag@gmail.com',
     url='https://github.com/Epi10/epifpm',
-    #download_url='https://github.com/Epi10/pyngdom/releases/tag/%s' % __version__,
     classifiers=[
         "Operating System :: OS Independent",
         "Intended Audience :: Developers",
