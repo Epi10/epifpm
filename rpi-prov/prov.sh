@@ -2,7 +2,7 @@
 
 
 apt-get update
-apt-get install -y python-pip git htop
+apt-get install -y python-pip git htop ipython python-dev
 
 
 checksum=$(sha256sum ${BASH_SOURCE[0]})
@@ -25,6 +25,9 @@ if [ "$checksum" != "$new_checksum" ];then
     /usr/local/src/epifpm/rpi-prov/prov.sh
     exit
 fi
+
+##
+
 
 ## DISABLE ttyAMA0
 

@@ -105,9 +105,16 @@ class Fingerprint(object):
         print self.read()
 
     def get_image(self):
-        """Get a finguerprint read from the sensor"""
+        """Get a fingerprint from the sensor and load it into a "ImageBuffer" """
         self.write(instruction_code=PACKAGE_GETIMAGE, data=[])
         return self.read()
+
+    def get_image_until(self, condition=FINGERPRINT_OK):
+        r = self.get_image()
+        while r.get('confirmation_code') == condition:
+            r = self.get_image()
+        return r
+
 
     def up_image(self, fo=None):
         logger.info('UPLOAD IMAGE')
@@ -218,7 +225,6 @@ if __name__ == '__main__':
     with Fingerprint() as f:
         f.handshake()
         f.empty()
-        while f.get_image().get('confirmation_code') != FINGERPRINT_OK:pass
+        image = f.get_image_until()
 
-        with open('/tmp/finguer.bmp', 'wb') as g:
-            f.up_image(fo=g)
+        print image
