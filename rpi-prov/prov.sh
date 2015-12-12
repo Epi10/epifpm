@@ -19,6 +19,7 @@ new_checksum=$(sha256sum /usr/local/src/epifpm/rpi-prov/prov.sh)
 
 if [ "$checksum" != "$new_checksum" ];then
     chmod a+x /usr/local/src/epifpm/rpi-prov/prov.sh
+    /usr/local/src/epifpm/rpi-prov/prov.sh
     exit
 fi
 
