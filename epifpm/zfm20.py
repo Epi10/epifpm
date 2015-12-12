@@ -111,7 +111,7 @@ class Fingerprint(object):
 
     def get_image_until(self, condition=FINGERPRINT_OK):
         r = self.get_image()
-        while r.get('confirmation_code') == condition:
+        while r.get('confirmation_code') != condition:
             r = self.get_image()
         return r
 
