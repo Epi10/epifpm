@@ -2,6 +2,11 @@
 
 from epifpm.zfm20 import Fingerprint, FINGERPRINT_NOFINGER
 
+import logging
+
+logger = logging.getLogger()
+logger.setLevel(level=logging.INFO)
+
 
 with Fingerprint() as f:
     f.empty()

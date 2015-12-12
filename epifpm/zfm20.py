@@ -146,10 +146,11 @@ class Fingerprint(object):
         logger.info('DOWNLOAD IMAGE')
         self.write(instruction_code=PACKAGE_DOWN_IMAGE, data=[])
         rdata = []
-        data = fo.read(128)
+        data = fo.read(chunks)
         while data:
             rdata.append(data)
-            data = fo.read(128)
+            data = fo.read(chunks)
+
         for idata in rdata[:-1]:
             self.write(instruction_code=idata, data=[], identifier=PACKAGE_DATA)
         self.write(instruction_code=rdata[-1], data=[], identifier=0x08)
