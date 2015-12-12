@@ -17,12 +17,31 @@ fi
 
 new_checksum=$(sha256sum /usr/local/src/epifpm/rpi-prov/prov.sh)
 
-if [ "$checksum" != "$new_checksum" ];then
+if [ "{$checksum}" != "${new_checksum}" ];then
     chmod a+x /usr/local/src/epifpm/rpi-prov/prov.sh
     /usr/local/src/epifpm/rpi-prov/prov.sh
     exit
 fi
 
+## DISABLE ttyAMA0
+
+CHANGE_BOOT_CMDLINE=$(grep ttyAMA0 /boot/cmdline.txt 2>&1 > /dev/null  && echo yes)
+
+grep ttyAMA0 /boot/cmdline.txt 2>&1 > /dev/null  && sed -i 's/console=ttyAMA0,[0-9]*//g' /boot/cmdline.txt
+
+CHANGE_SECURETTY=$(grep ttyAMA0 /etc/securetty 2>&1 > /dev/null  && echo yes)
+
+grep ttyAMA0 /etc/securetty 2>&1 > /dev/null  && sed -i '/ttyAMA0/d' /etc/securetty
+
+### Verify if we need restart
+
+if [ ! -z ${CHANGE_BOOT_CMDLINE} ]; then
+    shutdown -r now
+fi
+
+if [ ! -z ${CHANGE_SECURETTY} ]; then
+    shutdown -r now
+fi
 
 exit
 
