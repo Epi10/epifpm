@@ -21,6 +21,10 @@ PACKAGE_UP_CHAR = 0x08
 
 PACKAGE_DOWN_IMAGE = 0x0B
 
+PACKAGE_COMMAND = 0x01
+PACKAGE_DATA = 0x02
+
+
 FINGERPRINT_OK = 0x00
 FINGERPRINT_NOFINGER = 0x02
 FINGERPRINT_ENROLLMISMATCH = 0x0A
@@ -54,19 +58,19 @@ class Fingerprint(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
 
-    def write(self, instruction_code, data):
+    def write(self, instruction_code, data, identifier=PACKAGE_COMMAND):
 
         size = len(data) + 3
 
         packet_size = list(divmod(size, 256))
 
-        checksum = 0x01 + sum(packet_size) + instruction_code + sum(data)
+        checksum = identifier + sum(packet_size) + instruction_code + sum(data) # change the 0x01 with 'identifier'
 
         checksum = list(divmod(checksum, 256))
 
         buffer = map(
             lambda x: chr(x),
-            HEADER + self.address + [0x01] + packet_size + [instruction_code] + data + checksum
+            HEADER + self.address + [identifier] + packet_size + [instruction_code] + data + checksum
         )
 
         self.last_write_package = buffer
@@ -129,7 +133,7 @@ class Fingerprint(object):
         while r['identifier'] != 0x08:
             r = self.read()
             resp['image'].write(r['extra_data'])
-            log.debug("get %s bytes" % len(r['extra_data']))
+            logger.debug("get %s bytes" % len(r['extra_data']))
             if fo:
                 fo.write(r['extra_data'])
 
@@ -137,10 +141,20 @@ class Fingerprint(object):
 
         return resp
 
-    def down_image(self, fo):
+    def down_image(self, fo, chunks=128):
         "not finish"
         logger.info('DOWNLOAD IMAGE')
         self.write(instruction_code=PACKAGE_DOWN_IMAGE, data=[])
+        rdata = []
+        data = fo.read(128)
+        while data:
+            rdata.append(data)
+            data = fo.read(128)
+        for idata in rdata[:-1]:
+            self.write(instruction_code=idata, data=[], identifier=PACKAGE_DATA)
+        self.write(instruction_code=rdata[-1], data=[], identifier=0x08)
+
+
 
     def image_2_tz(self, buffer):
         self.write(instruction_code=PACKAGE_IMAGE2TZ, data=[buffer])
