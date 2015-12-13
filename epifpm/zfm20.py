@@ -23,14 +23,14 @@ PACKAGE_DOWN_IMAGE = 0x0B
 
 PACKAGE_COMMAND = 0x01
 PACKAGE_DATA = 0x02
-
+PACKAGE_ACK = 0x07
+PACKAGE_END_OF_DATA = 0x08
 
 FINGERPRINT_OK = 0x00
 FINGERPRINT_NOFINGER = 0x02
 FINGERPRINT_ENROLLMISMATCH = 0x0A
 
-logging.basicConfig(level=logging.DEBUG)
-
+#logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
@@ -64,7 +64,7 @@ class Fingerprint(object):
 
         packet_size = list(divmod(size, 256))
 
-        checksum = identifier + sum(packet_size) + instruction_code + sum(data) # change the 0x01 with 'identifier'
+        checksum = identifier + sum(packet_size) + (instruction_code or 0) + sum(data)
 
         checksum = list(divmod(checksum, 256))
 
@@ -75,7 +75,6 @@ class Fingerprint(object):
 
         self.last_write_package = buffer
         logger.debug('write package: %s' % repr(buffer))
-        #print "==>", buffer
         self.serial.write(''.join(buffer))
 
     def read(self):
@@ -142,7 +141,7 @@ class Fingerprint(object):
         return resp
 
     def down_image(self, fo, chunks=128):
-        "not finish"
+        """ Not finish """
         logger.info('DOWNLOAD IMAGE')
         self.write(instruction_code=PACKAGE_DOWN_IMAGE, data=[])
         rdata = []
@@ -152,10 +151,8 @@ class Fingerprint(object):
             data = fo.read(chunks)
 
         for idata in rdata[:-1]:
-            self.write(instruction_code=idata[0], data=idata[1:], identifier=PACKAGE_DATA)
-        self.write(instruction_code=rdata[-1][0], data=rdata[-1][1:], identifier=0x08)
-
-
+            self.write(instruction_code=None, data=idata, identifier=PACKAGE_DATA)
+        self.write(instruction_code=None, data=rdata[-1], identifier=PACKAGE_END_OF_DATA)
 
     def image_2_tz(self, buffer):
         self.write(instruction_code=PACKAGE_IMAGE2TZ, data=[buffer])
@@ -238,6 +235,7 @@ def register_finger(id):
             raise Exception("No Match")
 
         print f.store_model(id=id, buffer=1)
+
 
 def validate_finger():
     with Fingerprint() as f:
