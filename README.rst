@@ -25,3 +25,7 @@ http://www.adafruit.com/datasheets/ZFM%20user%20manualV15.pdf
 also i didn't use it, but it looks promising
 
 http://iotdk.intel.com/docs/master/upm/classupm_1_1_z_f_m20.html#pub-types
+
+other prominent resource
+
+https://sicherheitskritisch.de/2015/03/fingerprint-sensor-fuer-den-raspberry-pi-und-debian-linux-en/
