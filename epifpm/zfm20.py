@@ -140,23 +140,23 @@ class Fingerprint(object):
     def up_image(self, fo=None):
         """ Get Image src from ImageBuffer """
         logger.info('UPLOAD IMAGE')
+
         self.write(instruction_code=PACKAGE_UP_IMAGE, data=[])
         resp = self.read()
-        resp['image'] = StringIO()
+
         r = {'identifier': 0x00}
 
-        r = self.read()
+        datas = []
+
         while r['identifier'] != 0x08:
-            resp['image'].write(r['extra_data'])
-            logger.debug("get %s bytes" % len(r['extra_data']))
             r = self.read()
+            datas.append(r['extra_data'])
+            #resp['image'].write(r['extra_data'])
+            logger.debug("get %s bytes" % len(r['extra_data']))
 
-        resp['image'].write(r['extra_data'])
-        resp['image'].seek(0)
-
-        if fo:
-            fo.write(resp['image'].read())
-        resp['image'].seek(0)
+        if fo: fo.write(''.join(datas))
+        resp['image'] = StringIO(''.join(datas))
+        resp['image-data'] = StringIO(datas)
 
         return resp
 
