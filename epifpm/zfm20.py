@@ -165,6 +165,7 @@ class Fingerprint(object):
         logger.info('DOWNLOAD IMAGE')
         chunks = self.get_system_parameters()['Data packet size']
         self.write(instruction_code=PACKAGE_DOWN_IMAGE, data=[])
+        self.read()
         rdata = []
         data = fo.read(chunks)
         while data:
