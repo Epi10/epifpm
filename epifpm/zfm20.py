@@ -154,7 +154,8 @@ class Fingerprint(object):
         resp['image'].write(r['extra_data'])
         resp['image'].seek(0)
 
-        fo.write(resp['image'].read())
+        if fo:
+            fo.write(resp['image'].read())
         resp['image'].seek(0)
 
         return resp
