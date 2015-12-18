@@ -32,3 +32,15 @@ f.image_2_tz(buffer=1)
 print f.search(1)
 
 f.empty()
+
+print "put image 1"
+f.down_image(image1)
+f.image_2_tz(buffer=1)
+
+print "Guardando modelo 1"
+f.store_model(id=1, buffer=1)
+
+print "buscando 1"
+f.get_image_until()
+f.image_2_tz(buffer=1)
+print f.search(1)

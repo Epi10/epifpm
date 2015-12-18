@@ -70,7 +70,7 @@ class Fingerprint(object):
 
         buffer = map(
             lambda x: chr(x),
-            HEADER + self.address + [identifier] + packet_size + [instruction_code] + data + checksum
+            HEADER + self.address + [identifier] + packet_size + filter(None, [instruction_code]) + data + checksum
         )
 
         self.last_write_package = buffer
