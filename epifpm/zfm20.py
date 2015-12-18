@@ -129,12 +129,16 @@ class Fingerprint(object):
         resp['image'] = StringIO()
         r = {'identifier': 0x00}
 
+        r = self.read()
         while r['identifier'] != 0x08:
-            r = self.read()
             resp['image'].write(r['extra_data'])
             logger.debug("get %s bytes" % len(r['extra_data']))
             if fo:
                 fo.write(r['extra_data'])
+
+            r = self.read()
+
+        resp['image'].write(r['extra_data'])
 
         resp['image'].seek(0)
 
@@ -154,11 +158,11 @@ class Fingerprint(object):
             self.write(instruction_code=None, data=idata, identifier=PACKAGE_DATA)
         self.write(instruction_code=None, data=rdata[-1], identifier=PACKAGE_END_OF_DATA)
 
-    def up_char(self, fo, buffer, chunks=128):
-        logger.info('uploading char')
-        self.write(instruction_code=PACKAGE_UP_CHAR, data=[buffer])
-        # add read sequence
-        
+    #def up_char(self, fo, buffer, chunks=128):
+    #    logger.info('uploading char')
+    #    self.write(instruction_code=PACKAGE_UP_CHAR, data=[buffer])
+    #    # add read sequence
+
 
     def image_2_tz(self, buffer):
         self.write(instruction_code=PACKAGE_IMAGE2TZ, data=[buffer])
