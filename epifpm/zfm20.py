@@ -115,7 +115,7 @@ class Fingerprint(object):
         ret['Finger library size'] = ret['extra_data'][2:2+1]
         ret['Security level'] = ret['extra_data'][3:3+1]
         ret['Device address'] = ret['extra_data'][4:4+2]
-        ret['Data packet size'] = ord(ret['extra_data'][6:6+1])
+        ret['Data packet size'] = [32, 64, 128, 256][ord(ret['extra_data'][6:6+1])]
         ret['Baud settings'] = ret['extra_data'][7:7+1]
 
         return ret
