@@ -154,6 +154,12 @@ class Fingerprint(object):
             self.write(instruction_code=None, data=idata, identifier=PACKAGE_DATA)
         self.write(instruction_code=None, data=rdata[-1], identifier=PACKAGE_END_OF_DATA)
 
+    def up_char(self, fo, buffer, chunks=128):
+        logger.info('uploading char')
+        self.write(instruction_code=PACKAGE_UP_CHAR, data=[buffer])
+        # add read sequence
+        
+
     def image_2_tz(self, buffer):
         self.write(instruction_code=PACKAGE_IMAGE2TZ, data=[buffer])
         return self.read()

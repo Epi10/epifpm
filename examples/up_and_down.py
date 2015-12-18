@@ -16,7 +16,7 @@ with Fingerprint() as f:
     print "registering and downloading 1rst image"
     f.get_image_until()
     f.image_2_tz(buffer=1)
-    with open(IMG1, 'w') as image1:
+    with open(IMG1, 'wb') as image1:
         f.up_image(image1)
 
     f.get_image_until(condition=FINGERPRINT_NOFINGER)
@@ -24,7 +24,7 @@ with Fingerprint() as f:
     print "registering and downloading 2nd image"
     f.get_image_until()
     f.image_2_tz(buffer=2)
-    with open(IMG2, 'w') as image2:
+    with open(IMG2, 'wb') as image2:
         f.up_image(image2)
 
 
