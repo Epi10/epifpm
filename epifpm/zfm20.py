@@ -109,6 +109,15 @@ class Fingerprint(object):
     def get_system_parameters(self):
         self.write(instruction_code=PACKAGE_GET_SYS_PARS, data=[])
         ret = self.read()
+
+        ret['Status register'] = ret['extra_data'][0:0+1]
+        ret['System identifier code'] = ret['extra_data'][1:1+1]
+        ret['Finger library size'] = ret['extra_data'][2:2+1]
+        ret['Security level'] = ret['extra_data'][3:3+1]
+        ret['Device address'] = ret['extra_data'][4:4+2]
+        ret['Data packet size'] = ret['extra_data'][6:6+1]
+        ret['Baud settings'] = ret['extra_data'][7:7+1]
+
         return ret
 
 
