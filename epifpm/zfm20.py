@@ -163,9 +163,9 @@ class Fingerprint(object):
     def down_image(self, fo):
         """ Not finish """
         logger.info('DOWNLOAD IMAGE')
+        chunks = self.get_system_parameters()['Data packet size']
         self.write(instruction_code=PACKAGE_DOWN_IMAGE, data=[])
         rdata = []
-        chunks = self.get_system_parameters()['Data packet size']
         data = fo.read(chunks)
         while data:
             rdata.append(map(ord, data))
