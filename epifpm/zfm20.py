@@ -156,7 +156,7 @@ class Fingerprint(object):
 
         if fo: fo.write(''.join(datas))
         resp['image'] = StringIO(''.join(datas))
-        resp['image-data'] = StringIO(datas)
+        resp['image-data'] = datas
 
         return resp
 
