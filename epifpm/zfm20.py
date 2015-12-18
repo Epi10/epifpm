@@ -149,22 +149,22 @@ class Fingerprint(object):
         while r['identifier'] != 0x08:
             resp['image'].write(r['extra_data'])
             logger.debug("get %s bytes" % len(r['extra_data']))
-            if fo:
-                fo.write(r['extra_data'])
-
             r = self.read()
 
         resp['image'].write(r['extra_data'])
+        resp['image'].seek(0)
 
+        fo.write(resp['image'].read())
         resp['image'].seek(0)
 
         return resp
 
-    def down_image(self, fo, chunks=128):
+    def down_image(self, fo):
         """ Not finish """
         logger.info('DOWNLOAD IMAGE')
         self.write(instruction_code=PACKAGE_DOWN_IMAGE, data=[])
         rdata = []
+        chunks = self.get_system_parameters()['Data packet size']
         data = fo.read(chunks)
         while data:
             rdata.append(map(ord, data))
