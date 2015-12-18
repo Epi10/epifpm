@@ -18,6 +18,7 @@ PACKAGE_SEARCH = 0x04
 PACKAGE_TEMPLATE_NUM = 0x1d
 PACKAGE_UP_IMAGE = 0x0A
 PACKAGE_UP_CHAR = 0x08
+PACKAGE_GET_SYS_PARS = 0x0f
 
 PACKAGE_DOWN_IMAGE = 0x0B
 
@@ -103,7 +104,13 @@ class Fingerprint(object):
 
     def handshake(self):
         self.write(instruction_code=PACKAGE_HANDSHAKE, data=[0])
-        print self.read()
+        return self.read()
+
+    def get_system_parameters(self):
+        self.write(instruction_code=PACKAGE_GET_SYS_PARS, data=[])
+        ret = self.read()
+        return ret
+
 
     def empty(self):
         self.write(instruction_code=PACKAGE_EMPTY, data=[])
